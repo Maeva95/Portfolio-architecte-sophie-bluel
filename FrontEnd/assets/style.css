@@ -2,7 +2,10 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-
+@font-face {
+	font-family: 'pen-to-square';
+	src: url('https://fontawesome.com/icons/pen-to-square?f=classic&s=solid');
+}
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -49,17 +52,22 @@ table {
 /** end reset css**/
 body {
 	max-width: 1440px;
-	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 	background-color: #FFFEF8;
 	display: flex;
 	flex-direction: column;
 }
+main {
+	margin: 0 247px;
+}
 header {
-	display: flex;
+	display: grid;
+	grid-template-areas: 
+	'modeEdition modeEdition' 
+	'h1 nav';
 	justify-content: space-between;
-	margin: 50px 0
+	width: 100%;
 }
 section {
 	margin: 50px 0
@@ -71,7 +79,8 @@ h1{
 	font-family: 'Syne';
 	font-size: 22px;
 	font-weight: 800;
-	color: #B1663C
+	color: #B1663C;
+	margin: 50px 0 50px 105px;
 }
 
 h1 > span {
@@ -86,6 +95,9 @@ h2{
 	font-weight: 700;
 	font-size: 30px;
 	color: #1D6154
+}
+nav {
+	margin: 50px 105px 50px 0;
 }
 nav ul {
 	display: flex;
@@ -103,18 +115,27 @@ li:hover, a:hover {
 }
 nav li a {
 	text-decoration: none;
+	color:black;
+}
+nav img {
+	width: 17px;
+	padding-top: 5px;
 }
 #introduction {
 	display: flex;
 	align-items: center;
+	gap: 72px;
 }
 #introduction figure {
-	flex: 1
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+
 }
 #introduction img {
 	display: block;
-	margin: auto;
-	width: 80%;
+	width: 100%;
 }
 
 #introduction article {
@@ -127,15 +148,34 @@ nav li a {
 #introduction p {
 	margin-bottom: 0.5em;
 }
-#portfolio h2 {
-	text-align: center;
-	margin-bottom: 1em;
+#portfolio {
+	padding-top: 50px;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	align-items: baseline;
+	column-gap: 60px;
 }
+#portfolio h2 {
+	text-align: end;
+	margin-bottom: 1em;
+	grid-column: 1 / span 2;
+	padding-right: 50px;
+}
+#portfolio .edition-gallery {
+	margin-bottom: 1em;
+	grid-column-start: 3;
+	grid-column-end: 3;
+	display: flex;
+	gap: 10px;
+}
+
 #portfolio .categories {
+	grid-column: 1 / span 3;
 	display: flex;
 	justify-content: center;
 	margin-bottom: 1em;
 }
+
 .categories button {
 	font-family: 'Syne';
 	font-weight: 700;
@@ -146,7 +186,7 @@ nav li a {
 	margin : 2em 0.5em;
 	text-align: center;
 	border-radius: 60px ;
-	height: 50px;
+	height: 37px;
 	border: solid 1px #1D6154;
 }
 
@@ -156,11 +196,12 @@ nav li a {
 }
 
 .categories button:hover {
-	background-color:#1D6154;
+	background-color: #0E2F28;
 	color: white;
 }
 
 .gallery {
+	grid-column: 1 / span 3;
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -174,7 +215,8 @@ nav li a {
 }
 #contact {
 	width: 50%;
-margin: auto;
+	padding-top: 50px;
+	margin: auto;
 }
 #contact > * {
 	text-align: center;
@@ -204,7 +246,7 @@ margin: auto;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"]{
+#contact input[type="submit"]{
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
@@ -212,7 +254,11 @@ input[type="submit"]{
 	margin : 2em auto ;
 	width: 180px;
 	text-align: center;
+	height: 36px;
 	border-radius: 60px ;
+}
+input[type="submit"]:hover {
+	background-color: #0E2F28;
 }
 
 /* PAGE LOG IN */
@@ -262,16 +308,56 @@ input[type="submit"]{
 	display: flex;
 	flex-direction: column;
 }
+input[type="email"]:invalid {
+	border-color: #900;
+	background-color: #fff;
+}
+input[type="password"]:invalid {
+	border-color: #900;
+	background-color: #fff;
+}
+.errorEmail, .errorPassword {
+	color:#0E2F28;
+	background-color: #fff;
+}
 
-
+/* FOOTER */
+footer nav {
+	margin: 0;
+}
 footer nav ul {
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
-	margin: 2em 0;
+	margin-top: 2em;
 	background-color: #fff;
 }
 footer nav ul li{
-	padding: 20px 10px;
+	padding: 20px 110px;
+	font-size: 14px;
 }
+
+.modeEdition {
+	height: 59px;
+	background: black;
+	color: #fff;
+	grid-column: 1 / span 2;
+	display: flex;
+	gap: 10px;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+}
+
+.modeEdition li:nth-child(3) a {
+	background: #fff;
+	color: black;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 28px;
+	padding: 10px 20px;
+}
+
 
