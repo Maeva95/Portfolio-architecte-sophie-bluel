@@ -148,6 +148,7 @@ function displayWorksModal (works){
         workElement.appendChild(workImage);
         workElement.appendChild(workDetail);
     }
+    
 }
 fetch(urlWorks)
 .then((resp) => resp.json())
