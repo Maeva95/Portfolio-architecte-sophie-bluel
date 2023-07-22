@@ -337,11 +337,22 @@ footer nav ul li{
 	font-size: 14px;
 }
 
+
+/* MODE EDITION */
 .modeEdition {
+	position: sticky;
+	top: 0;
+	overflow: auto;
+	width: 100%;
 	height: 59px;
 	background: black;
 	color: #fff;
 	grid-column: 1 / span 2;
+	margin: 0;
+	padding-top: 20px;
+	box-sizing: border-box;
+}
+.listModeEdition {
 	display: flex;
 	gap: 10px;
 	flex-direction: row;
@@ -349,6 +360,7 @@ footer nav ul li{
 	justify-content: center;
 	align-content: center;
 	align-items: center;
+	z-index: 2;
 }
 
 .modeEdition li:nth-child(3) a {
@@ -360,4 +372,42 @@ footer nav ul li{
 	padding: 10px 20px;
 }
 
+/* MODE EDITION - MODAL WINDOW */
 
+#modal {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+	position: relative;
+	width: 630px;
+	min-height: 731px;
+	background-color: #FFFEF8;
+	display: flex;
+	flex-direction: column;
+}
+
+.modal-content i {
+	position: absolute;
+	top: 26px;
+	right: 30px;
+}
+
+.modal-content h2 {
+	text-align: center;
+	margin: 50px;
+}
+
+.modal-gallery {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	gap: 20px;
+	margin: 20px;
+	width: 100%;
+}
