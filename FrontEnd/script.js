@@ -4,8 +4,6 @@ const urlCategories = 'http://localhost:5678/api/categories';
 const urlUsersLogin = 'http://localhost:5678/api/users/login';
 
 
-
-
 // Affichage de tous les projets dans la galerie //
 function displayWorks(data) {
     document.querySelector(".gallery").innerHTML = "";
@@ -29,7 +27,6 @@ fetch(urlWorks)
 .then((response) => response.json())
 .then((data) => displayWorks(data))
 .catch((error) => {console.log(`Une erreur est survenue : ${error.message}`)})
-
 
 
 
@@ -155,31 +152,37 @@ if (loggedIn){
 
     // ajout bouton modif intro
     const introductionImage = document.querySelector(".introductionImage");
-    const introductionIconEdit = document.createElement("i");
-    introductionIconEdit.className = "fa-regular fa-pen-to-square";
-    const introductionBtnEdit = document.createElement("a");
-    introductionBtnEdit.innerText = "modifier";
-    introductionImage.appendChild(introductionIconEdit);
-    introductionImage.appendChild(introductionBtnEdit);
-
-    // ajout bouton modif portfolio
     const portfolioSection = document.querySelector("#portfolio");
-    const portfolioDivEdit = document.createElement("div");
-    portfolioDivEdit.className = "edition-gallery";
-    const portfolioIconEdit = document.createElement("i");
-    portfolioIconEdit.className = "fa-regular fa-pen-to-square";
-    const portfolioBtnEdit = document.createElement("a");
-    portfolioBtnEdit.innerText = "modifier";
-    portfolioSection.appendChild(portfolioDivEdit);
-    portfolioDivEdit.appendChild(portfolioIconEdit);
-    portfolioDivEdit.appendChild(portfolioBtnEdit);
-    const portfolioCategories = document.querySelector(".categories")
-    portfolioSection.insertBefore(portfolioDivEdit, portfolioCategories);
+    const portfolioCategories = document.querySelector(".categories");
+
+    const buttonEditGalleryIntro = document.createElement("div");
+    buttonEditGalleryIntro.className = "edition-gallery";
+    const iconEditGalleryIntro = document.createElement("i");
+    iconEditGalleryIntro.className = "fa-regular fa-pen-to-square";
+    const textEditGalleryIntro = document.createElement("a");
+    textEditGalleryIntro.innerText = "modifier";
+    introductionImage.appendChild(buttonEditGalleryIntro);
+    buttonEditGalleryIntro.appendChild(iconEditGalleryIntro);
+    buttonEditGalleryIntro.appendChild(textEditGalleryIntro);
+
+    const buttonEditGalleryPortfolio = document.createElement("div");
+    buttonEditGalleryPortfolio.className = "edition-gallery";
+    const iconEditGalleryPortfolio = document.createElement("i");
+    iconEditGalleryPortfolio.className = "fa-regular fa-pen-to-square";
+    const textEditGalleryPortfolio = document.createElement("a");
+    textEditGalleryPortfolio.innerText = "modifier";
+    portfolioSection.appendChild(buttonEditGalleryPortfolio);
+    buttonEditGalleryPortfolio.appendChild(iconEditGalleryPortfolio);
+    buttonEditGalleryPortfolio.appendChild(textEditGalleryPortfolio);
+    portfolioSection.insertBefore(buttonEditGalleryPortfolio, portfolioCategories);
+
+    createModal();
     
     //ajout de l'event listener au bouton modif Portfolio
-    portfolioBtnEdit.addEventListener("click", () => {
-        createModal(worksModal)
-    })
+    buttonEditGalleryPortfolio.addEventListener("click", ()=> {
+        toggleModal();
+        
+    });
     
     navLogin.addEventListener("click", (event) => {
     
@@ -190,14 +193,16 @@ if (loggedIn){
             window.location.href = "./index.html";
         }
     });
+
+
 }
 
-function createModal (worksModal) {
+
+function createModal() {
     const body = document.querySelector("body");
     const header = document.querySelector("header");
     const sectionModal = document.createElement("section");
-    sectionModal.setAttribute("id", "modal");
-    sectionModal.innerHTML = "";
+    sectionModal.setAttribute("class", "modal");
     const closeModal = document.createElement("i");
     closeModal.className = "fa-solid fa-xmark";
     const contentModal = document.createElement("div");
@@ -211,9 +216,11 @@ function createModal (worksModal) {
     buttonAddWork.setAttribute("type", "button");
     buttonAddWork.className = "btn-add-work";
     buttonAddWork.innerText = "Ajouter une photo";
-    const buttonCancelGallery = document.createElement("button");
-    buttonCancelGallery.setAttribute("type", "button");
+
+    const buttonCancelGallery = document.createElement("a");
+    buttonCancelGallery.setAttribute("href", "#");
     buttonCancelGallery.className = "btn-cancel-gallery";
+    buttonCancelGallery.textContent = "Supprimer la galerie";
 
     body.insertBefore(sectionModal, header);
     sectionModal.appendChild(contentModal);
@@ -223,39 +230,69 @@ function createModal (worksModal) {
     contentModal.appendChild(buttonAddWork);
     contentModal.appendChild(buttonCancelGallery);
 
-
-    for (let index = 0; index < worksModal.length; index++) {
-        const modalWorksGallery = document.querySelector(".modal-gallery");
-        const modalWorkElement = document.createElement("figure");
-        const modalWorkImage = document.createElement("img");
-        modalWorkImage.src = worksModal.imageUrl;
-        const modalWorkImageIcon = document.createElement("i");
-        modalWorkImageIcon.className = "fa-solid fa-trash-can";
-        const editWorkElement = document.createElement("p");
-        editWorkElement.innerText = "éditer";
-        // rattachement des balises aux DOM
-        modalWorksGallery.appendChild(modalWorkElement);
-        modalWorkElement.appendChild(modalWorkImage);
-        modalWorkElement.appendChild(editWorkElement);
-        modalWorkElement.appendChild(modalWorkImageIcon);
-
-    }
+    getWorksModal();
     // au click de l'icone "x", fermer la fenetre sectionModal
     closeModal.addEventListener("click", ()=> {
-        sectionModal.style.display = "none";
-    })
+            sectionModal.classList.toggle("active");
+    });
+    // au click en dehors de la modale, fermer la fenetre sectionModal
     window.addEventListener("click", (event)=> {
         if (event.target == sectionModal) {
-            sectionModal.style.display = "none";
+            sectionModal.classList.toggle("active");
         }
-    })
+    });
+    
 }
-fetch(urlWorks)
-        .then((r) => r.json())
-        .then((worksModal) => createModal(worksModal))
-        .catch((error) => {console.log(`Une erreur de la fonction createModal est survenue : ${error.message}`)})
 
+
+async function getWorksModal() {
+    try {
+        const data = await fetchDatas();
+        for (work of data) {
+            const modalWorksGallery = document.querySelector(".modal-gallery");
+            const modalWorkElement = document.createElement("figure");
+            const modalWorkImage = document.createElement("img");
+            modalWorkImage.src = work.imageUrl;
+            const modalWorkImageIcon = document.createElement("i");
+            modalWorkImageIcon.className = "fa-solid fa-trash-can";
+            const editWorkElement = document.createElement("p");
+            editWorkElement.innerText = "éditer";
+            // rattachement des balises aux DOM
+            modalWorksGallery.appendChild(modalWorkElement);
+            modalWorkElement.appendChild(modalWorkImage);
+            modalWorkElement.appendChild(editWorkElement);
+            modalWorkElement.appendChild(modalWorkImageIcon);
+
+        }
         
+    console.table(data)
+    } catch (error) {
+        console.log(`Une erreur de la fonction "getWorksModal" s'est produite`)
+    }
+    
+}
+
+function toggleModal() {
+    const sectionModal = document.querySelector(".modal");
+    sectionModal.classList.toggle("active");
+}
+
+async function fetchDatas() {
+    try {
+        const response = await fetch(urlWorks);
+        if (!response.ok) {
+            throw new Error("Erreur de récupération des données API")
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+
+
 //enregistrer le token dans le LS 
 if (loggedIn === null){
     fetch(urlUsersLogin)
