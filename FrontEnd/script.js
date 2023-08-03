@@ -22,6 +22,7 @@ function displayWorks(data) {
         workElement.appendChild(workDetail);
     }
 }
+
 // Appel de l'API http://localhost:5678/api/works
 fetch(urlWorks)
 .then((response) => response.json())
@@ -80,61 +81,31 @@ fetch(urlWorks)
 .then((works) => filtersWorks (works))
 .catch((error) => {console.log(`Une erreur est survenue : ${error.message}`)})
 
-// ajout homepage edit
+
+
+/////////// création Homepage Edit /////////
+
+
 
 const userId = window.localStorage.getItem('userId');
 const userToken = window.localStorage.getItem('token');
 const loggedIn = userId && userToken ? true : false;
 
-
-// récupération des projets dans le LS 
-/*
-if (loggedIn) {
-    fetch(urlWorks)
-    .then((resp) => resp.json())
-    .then((workDatas) => {
-        let { workId, workTitle, workImage, workCategoryId, workUserId, workCategory} = workDatas;
-        if (workId && workTitle && workImage && workCategoryId && workUserId && workCategory) {
-            //enregistrement de userID et token dans le localStorage
-            window.localStorage.setItem("id", workId);
-            window.localStorage.setItem("title", workTitle);
-            window.localStorage.setItem("imageUrl", workImage);
-            window.localStorage.setItem("categoryId", workCategoryId);
-            window.localStorage.setItem("userId", workUserId);
-            window.localStorage.setItem("category", workCategory);
-        }
-        console.log(window.localStorage.getItem("id"))
-    })
-}
-const workId = window.localStorage.getItem('userId');
-const workTitle = window.localStorage.getItem('title');
-const workImage = window.localStorage.getItem('imageUrl');
-const workCategoryId = window.localStorage.getItem('categoryId');
-const workUserId = window.localStorage.getItem('userId');
-const workCategory = window.localStorage.getItem('category');
-const workGet = workId && workTitle && workImage && workCategoryId && workUserId && workCategory ? true : false;
-*/
-
-
-
-
-
-
-
+// Retrait des filtres des projets lorsque nous ne sommes pas connectés
 if (!loggedIn) {
-    // Appel de l'API http://localhost:5678/api/categories
     fetch(urlCategories)
     .then((response) => response.json())
     .then((datas) => createFiltersButtons(datas))
     .catch((error) => {console.log(`Une erreur est survenue : ${error.message}`)})
 
 }
-// création Homepage Edit
+
+
 if (loggedIn){
     
     //modif texte lien nav "login" en "logout"
     const navLogin = document.querySelector("nav li:nth-child(3) a");
-    document.querySelector("nav li:nth-child(3) a").innerText = "logout";
+    navLogin.innerText = "logout";
 
     // création du mode édition dans le header
     const body = document.querySelector("body");
@@ -177,7 +148,7 @@ if (loggedIn){
     portfolioSection.insertBefore(buttonEditGalleryPortfolio, portfolioCategories);
 
     createModal();
-    
+
     //ajout de l'event listener au bouton modif Portfolio
     buttonEditGalleryPortfolio.addEventListener("click", ()=> {
         toggleModal();
@@ -197,64 +168,102 @@ if (loggedIn){
 
 }
 
+// création de la fenêtre modale
 
 function createModal() {
     const body = document.querySelector("body");
     const header = document.querySelector("header");
     const sectionModal = document.createElement("section");
     sectionModal.setAttribute("class", "modal");
+    const returnModalWorks = document.createElement("i");
+    returnModalWorks.className = "return fa-solid fa-arrow-left";
+    returnModalWorks.style.display = "none";
     const closeModal = document.createElement("i");
     closeModal.className = "fa-solid fa-xmark";
     const contentModal = document.createElement("div");
     contentModal.className = "modal-content";
-    const titleContentModal = document.createElement("h2");
-    titleContentModal.innerText = "Galerie photo";
-    const galleryContentModal = document.createElement("div");
-    galleryContentModal.className = "modal-gallery";
+    const galleryContentModal = document.createElement("section");
+    galleryContentModal.className = "section-gallery";
+    const titleGallery = document.createElement("h2");
+    titleGallery.innerText = "Galerie photo";
+    const modalWorksGallery = document.createElement("div");
+    modalWorksGallery.className = "modal-gallery";
+    const formContentModal = document.createElement("section");
+    formContentModal.className = "section-form";
+    const titleForm = document.createElement("h2");
+    titleForm.innerText = "Ajout photo";
+
 
     const buttonAddWork = document.createElement("button");
     buttonAddWork.setAttribute("type", "button");
     buttonAddWork.className = "btn-add-work";
     buttonAddWork.innerText = "Ajouter une photo";
-
     const buttonCancelGallery = document.createElement("a");
     buttonCancelGallery.setAttribute("href", "#");
     buttonCancelGallery.className = "btn-cancel-gallery";
     buttonCancelGallery.textContent = "Supprimer la galerie";
-
     body.insertBefore(sectionModal, header);
     sectionModal.appendChild(contentModal);
+    contentModal.appendChild(returnModalWorks);
     contentModal.appendChild(closeModal);
-    contentModal.appendChild(titleContentModal);
     contentModal.appendChild(galleryContentModal);
-    contentModal.appendChild(buttonAddWork);
-    contentModal.appendChild(buttonCancelGallery);
+    contentModal.appendChild(formContentModal);
+    galleryContentModal.appendChild(titleGallery);
+    galleryContentModal.appendChild(modalWorksGallery);
+    galleryContentModal.appendChild(buttonAddWork);
+    galleryContentModal.appendChild(buttonCancelGallery);
+    formContentModal.appendChild(titleForm);
 
     getWorksModal();
+    addWorks();
+
+    buttonAddWork.addEventListener("click", ()=> {
+        /*galleryContentModal.style.display = "none";*/
+        returnModalWorks.style.display = "block";
+        formContentModal.classList.toggle("active");
+        galleryContentModal.classList.toggle("disable");
+    })
+
+    returnModalWorks.addEventListener("click", ()=>{
+        returnModalWorks.style.display = "none";
+        galleryContentModal.classList.toggle("disable");
+        formContentModal.classList.toggle("active");
+
+    })
     // au click de l'icone "x", fermer la fenetre sectionModal
     closeModal.addEventListener("click", ()=> {
-            sectionModal.classList.toggle("active");
+        sectionModal.classList.toggle("active");
+        galleryContentModal.classList.toggle("disable");
+        formContentModal.classList.toggle("active");
+
     });
     // au click en dehors de la modale, fermer la fenetre sectionModal
     window.addEventListener("click", (event)=> {
         if (event.target == sectionModal) {
             sectionModal.classList.toggle("active");
+            galleryContentModal.classList.toggle("disable");
+            formContentModal.classList.toggle("active");
+    
         }
     });
+
     
 }
 
-
+// générer les travaux de la modale
 async function getWorksModal() {
     try {
         const data = await fetchDatas();
         for (work of data) {
             const modalWorksGallery = document.querySelector(".modal-gallery");
             const modalWorkElement = document.createElement("figure");
+            modalWorkElement.dataset.id = work.id;
             const modalWorkImage = document.createElement("img");
             modalWorkImage.src = work.imageUrl;
+            modalWorkImage.dataset.id = work.id;
             const modalWorkImageIcon = document.createElement("i");
-            modalWorkImageIcon.className = "fa-solid fa-trash-can";
+            modalWorkImageIcon.dataset.id = work.id;
+            modalWorkImageIcon.className = "iconDelete fa-solid fa-trash-can";
             const editWorkElement = document.createElement("p");
             editWorkElement.innerText = "éditer";
             // rattachement des balises aux DOM
@@ -263,20 +272,34 @@ async function getWorksModal() {
             modalWorkElement.appendChild(editWorkElement);
             modalWorkElement.appendChild(modalWorkImageIcon);
 
+            // fonction qui supprime les travaux au clic de l'icone "supprimer"
+
+            modalWorkImageIcon.addEventListener("click", ()=>{
+                const id = e.target.dataset.id;
+                const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY1MTg3NDkzOSwiZXhwIjoxNjUxOTYxMzM5fQ.JGN1p8YIfR-M-5eQ-Ypy6Ima5cKA4VbfL2xMr2MgHm4";
+                const reponse = fetch(`http://localhost:5678/api/works/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "accept": "*/*",
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                const modalWorkElement = reponse.json();
+                modalWorkElement.innerHTML = "";
+            })
         }
-        
-    console.table(data)
-    } catch (error) {
+    }catch (error) {
         console.log(`Une erreur de la fonction "getWorksModal" s'est produite`)
     }
-    
 }
 
+// fonction changement de classList de la modal à intégrer au listener "modifier"
 function toggleModal() {
     const sectionModal = document.querySelector(".modal");
     sectionModal.classList.toggle("active");
 }
 
+// fonction fetch pour récupérer les travaux de la modale
 async function fetchDatas() {
     try {
         const response = await fetch(urlWorks);
@@ -289,6 +312,35 @@ async function fetchDatas() {
         console.error(error);
         throw error;
     }
+}
+
+// fonction pour ajouter une projet
+
+
+function addWorks () {
+    const formContentModal = document.querySelector(".section-form");
+    const formAddWorks = document.createElement("FORM");
+    formAddWorks.setAttribute('id', 'formAddWorks');
+    formAddWorks.setAttribute('method', 'post');
+    formAddWorks.innerHTML = `
+    <form>
+        <label for="photo" class="label-photo">
+            <div class="upload">+ Ajouter photo</div>
+            <input type="file" name="photo" id="photo" style="display:none">
+            <span>jpg, png : 4mo max</span>
+        </label>
+        <label for="title">Titre</label>
+        <input type="text" id="title" name="title">
+        <label for="category">Categorie</label>
+        <select id="category" name="category">
+            <option value=""></option>
+            <option value="objets">Objets</option>
+            <option value="appartement">Appartement</option>
+            <option value="hotels">Hôtels & restaurants</option>
+        <input type="submit" class="btn-add-work" value="Valider" name="valider">
+    </form>`
+    formContentModal.appendChild(formAddWorks);
+
 }
 
 

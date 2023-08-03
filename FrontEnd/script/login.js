@@ -27,7 +27,7 @@ function generateListenerForm () {
 
     // ajout de l'event Listener sur le champ email
     emailLogin.addEventListener("input", (event) => {
-        const user= event.target.value;
+        const user = event.target.value;
         const valide = vérifierEmail(email);
         console.log(user)
         //verification email
